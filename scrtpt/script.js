@@ -56,13 +56,11 @@ const loadDetails = async (videoId) => {
 };
 
 const displayDetails = (details) => {
-  console.log(details);
-
   const modalContainer = document.getElementById("modal_container");
   modalContainer.innerHTML = `
   <div>
-  <img src="${details.thumbnail}" />
-  <p class="text-lg text-gray-500 py-2">${details.description}</p>
+    <img src="${details.thumbnail}" />
+    <p class="text-lg text-gray-500 py-2">${details.description}</p>
   </div>
   `;
   document.getElementById("custom_modal").showModal();
@@ -97,7 +95,6 @@ const displayVideos = (videos) => {
     videosContainer.classList.add("grid");
   }
   videos.forEach((video) => {
-    console.log(video);
     const card = document.createElement("div");
     card.classList = "card card-compact shadow-xl";
     card.innerHTML = `
