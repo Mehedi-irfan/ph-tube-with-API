@@ -45,6 +45,26 @@ const loadCategoryId = (id) => {
     })
     .then((err) => console.log(err));
 };
+//load details according id
+const loadDetails = async (videoId) => {
+  const url = `https://openapi.programming-hero.com/api/phero-tube/video/${videoId}`;
+  const res = await fetch(url);
+  const data = await res.json();
+  displayDetails(data.video);
+};
+
+const displayDetails = (details) => {
+  console.log(details);
+
+  const modalContainer = document.getElementById("modal_container");
+  modalContainer.innerHTML = `
+  <div>
+  <img src="${details.thumbnail}" />
+  <p class="text-lg text-gray-500 py-2">${details.description}</p>
+  </div>
+  `;
+  document.getElementById("custom_modal").showModal();
+};
 
 //display category
 function displayData(categories) {
@@ -110,7 +130,11 @@ const displayVideos = (videos) => {
    }
     </div>
     <p class="text-sm text-gray-400">views :- ${video.others.views}</p>
-    </div>
+   <div class="py-1">
+    <button onclick="loadDetails('${
+      video.video_id
+    }')" class="text-sm bg-gray-900 text-white px-4 py-1 rounded">Details</button>
+    </div></div>
   </div>
     `;
     videosContainer.append(card);
