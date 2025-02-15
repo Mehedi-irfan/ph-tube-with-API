@@ -6,11 +6,20 @@ const getTime = (time) => {
   remainingSec = time % 60;
   return `${hour} hr ${minute} min ${remainingSec} sec ago`;
 };
+//remove active color from button
+const removeActiveColor = () => {
+  const buttons = document.getElementsByClassName("category-btn");
+  for (let btn of buttons) {
+    btn.classList.remove("active");
+  }
+};
 //load categories
 function loadData() {
   fetch("https://openapi.programming-hero.com/api/phero-tube/categories")
     .then((res) => res.json())
-    .then((data) => displayData(data.categories))
+    .then((data) => {
+      displayData(data.categories);
+    })
     .catch((err) => console.log(err));
 }
 
@@ -22,20 +31,49 @@ const loadVideos = () => {
     .catch((err) => console.log(err));
 };
 
+//load video by id
+const loadCategoryId = (id) => {
+  fetch(`https://openapi.programming-hero.com/api/phero-tube/category/${id}`)
+    .then((res) => res.json())
+    .then((data) => {
+      //remove active class whose id you wanna show
+      removeActiveColor();
+      //add active color which button will click
+      const activeBtn = document.getElementById(`btn-${id}`);
+      activeBtn.classList.add("active");
+      displayVideos(data.category);
+    })
+    .then((err) => console.log(err));
+};
+
 //display category
 function displayData(categories) {
   const category = document.getElementById("categories");
   categories.forEach((item) => {
-    const button = document.createElement("button");
-    button.classList = "btn";
-    button.innerText = item.category;
-    category.append(button);
+    const buttonContainer = document.createElement("div");
+    buttonContainer.innerHTML = `
+   <button id="btn-${item.category_id}" onclick="loadCategoryId(${item.category_id})" class="btn category-btn">${item.category}</button>
+    `;
+    category.append(buttonContainer);
   });
 }
 
 //display videos
 const displayVideos = (videos) => {
   const videosContainer = document.getElementById("videos");
+  videosContainer.innerHTML = "";
+  if (videos.length == 0) {
+    videosContainer.classList.remove("grid");
+    videosContainer.innerHTML = `
+    <div class="flex flex-col w-full justify-center items-center gap-5 min-h-[400px]">
+    <img src="../asstes/Icon.png"/>
+    <h2 class="text-xl font-fond text-center">HERE IS NO CONTENT CATEGORY</h2>
+    </div>
+    `;
+    return;
+  } else {
+    videosContainer.classList.add("grid");
+  }
   videos.forEach((video) => {
     console.log(video);
     const card = document.createElement("div");
@@ -71,7 +109,7 @@ const displayVideos = (videos) => {
        : ""
    }
     </div>
-    <p></p>
+    <p class="text-sm text-gray-400">views :- ${video.others.views}</p>
     </div>
   </div>
     `;
